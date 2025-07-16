@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS metadata
+.DS_Store
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Streamlit cache
+.streamlit/
+
+# Model weights & large binaries – keep via Git-LFS if needed
+*.h5
+*.hdf5
+*.npy
+*.pkl
+
+# Raw / preprocessed MovieLens data (large CSV)
+autoint/data/ml-1m/*.csv
+autoint/data/ml-1m/*.dat
+
+# IDE configs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Environment files
+.env
+
+# MacOS
+*.DS_Store 
