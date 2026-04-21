@@ -1,103 +1,86 @@
-# MovieLens Recommendation – AutoInt & AutoInt+
+# MovieLens AutoInt Recommendation Learning Project
 
-본 프로젝트는 MovieLens 1M 데이터셋을 기반으로 다음 두 가지 모델을 구현-학습-시각화한 예제입니다.
+MovieLens 1M 데이터를 사용해 **recommendation system**의 feature interaction 모델을 학습한 교육 과정 산출물입니다. 포트폴리오 대표작이라기보다는, 추천시스템과 딥러닝 모델 구현을 학습하며 남긴 **Learning Project**로 정리했습니다.
 
-1. **AutoInt** : Self-Attention 기반의 Feature Interaction 모델
-2. **AutoInt+ (AutoInt × MLP)** : AutoInt 출력과 MLP 출력을 합산해 성능을 향상시킨 확장 버전
+## Project Goal
 
----
+- MovieLens 사용자, 영화, 평점 데이터를 추천 모델 입력 형태로 전처리합니다.
+- AutoInt(Self-Attention based Feature Interaction) 구조를 이해하고 구현합니다.
+- AutoInt 출력에 MLP를 결합한 AutoInt+ 형태를 실험합니다.
+- Streamlit으로 간단한 추천 결과 확인 화면을 구성합니다.
 
-## 1. 프로젝트 구조
+## Tech Stack
+
+| Area | Stack |
+|---|---|
+| Language | Python |
+| Modeling | TensorFlow, AutoInt, MLP |
+| Data | MovieLens 1M |
+| Preprocessing | pandas, NumPy, scikit-learn |
+| Demo | Streamlit |
+
+## Repository Structure
 
 ```text
-10_RecSys/
-├─ autoint/                 # 모델·데이터·스트림릿 앱
-│  ├─ autoint.py            # AutoInt 레이어/모델 구현
-│  ├─ autointMLP.py         # AutoInt+ 레이어/모델 구현 (TensorFlow 2.x)
-│  ├─ train_autoint_mlp.py  # AutoInt+ 학습·평가·가중치 저장 스크립트
-│  ├─ show_st.py            # Streamlit 시각화 앱
-│  ├─ data/                 # 전처리된 MovieLens 데이터 & field_dims.npy / label_encoders.pkl
-│  └─ model/                # 학습된 가중치 (.h5)
-└─ README.md                # ⬅ 현재 파일
+DS4-Main-Quest/
+├── README.md
+├── autointMLP.py
+└── autoint/
+    ├── README.md
+    ├── autoint.py
+    ├── show_st.py
+    ├── submit.ipynb
+    └── train_autoint_mlp.py
 ```
 
----
+## What I Practiced
 
-## 2. 환경 세팅
+- 범주형 feature를 모델 입력으로 바꾸는 preprocessing flow
+- embedding layer와 feature interaction의 역할
+- AutoInt의 self-attention 기반 feature interaction 개념
+- MLP branch를 결합해 모델을 확장하는 방식
+- 학습 스크립트와 시각화 앱을 분리하는 프로젝트 구조
+- 추천 결과를 Streamlit UI로 빠르게 확인하는 방식
+
+## How To Run
+
+가상환경을 만든 뒤 필요한 패키지를 설치합니다.
 
 ```bash
 conda create -n recsys python=3.11
 conda activate recsys
-pip install -r requirements.txt   # requirements.txt 를 직접 작성해도 좋습니다.
+pip install tensorflow pandas numpy scikit-learn streamlit
 ```
-필수 주요 패키지
-* TensorFlow >= 2.11
-* Pandas, NumPy, scikit-learn
-* Streamlit
 
----
+AutoInt+ 학습:
 
-## 3. 데이터 준비
-
-`autoint/data/ml-1m/` 폴더에는 다음 전처리 파일이 포함되어 있습니다.
-
-* `ratings_prepro.csv`, `movies_prepro.csv`, `users_prepro.csv`
-* 각 범주형 컬럼의 cardinality 정보를 담은 `field_dims.npy`
-* 학습·예측용 라벨 인코더 객체 `label_encoders.pkl`
-
-전처리 스크립트가 필요하다면 별도 Notebook(`submit.ipynb`)을 참고해 주세요.
-
----
-
-## 4. 모델 학습
-
-### 4-1. AutoInt (기존)
-사전 학습된 가중치 `autoint/model/autoInt_model.weights.h5` 가 이미 제공됩니다.
-
-### 4-2. AutoInt+
 ```bash
 python autoint/train_autoint_mlp.py
 ```
-* MovieLens 1M 데이터 전체(약 1M rows)를 학습
-* 기본 하이퍼파라미터: `embed_dim=16`, `dnn_hidden_units=(128,64)`, `epochs=5`, `batch_size=1024`
-* 학습 완료 후 가중치가 `autoint/model/autoIntMLP_model.weights.h5` 로 저장됩니다.
 
-하이퍼파라미터 튜닝을 위해 스크립트 상단의 **BATCH_SIZE / EPOCHS / learning_rate / hidden_units** 등을 자유롭게 변경해 성능(NDCG, Hit-Rate, AUC)을 향상시켜 볼 수 있습니다.
-
----
-
-## 5. Streamlit 시각화
+Streamlit demo 실행:
 
 ```bash
 streamlit run autoint/show_st.py
 ```
-* 사이드바에서 **AutoInt / AutoInt+** 모델 선택 가능
-* 사용자 ID·타깃 연/월을 입력하면
-  * 사용자 기본 정보 & 과거 시청 이력(평점 ≥ 4)
-  * 모델이 예측한 **Top-10 추천 영화**를 동시에 확인할 수 있습니다.
 
-_PTIP_: 가중치 변경 후 캐시를 초기화해야 할 때는 `R` 키(“Reload & Clear cache”) 또는 `streamlit cache clear` 명령을 사용하세요.
+## Notes
 
----
+- 이 레포는 교육 과정 중 만든 학습 산출물입니다.
+- 데이터와 모델 weight가 로컬 환경 기준으로 구성되어 있을 수 있어, 실행 전 경로와 의존성을 확인해야 합니다.
+- 대표 포트폴리오보다는 추천시스템 학습 기록으로 두는 것이 적합합니다.
 
-## 6. 성능 향상 실험 (AutoInt+)
+## Limitations
 
-다음 요소를 변경하며 A/B 테스트를 수행했습니다.
+- 실험 결과와 metric tracking이 충분히 구조화되어 있지 않습니다.
+- `requirements.txt`가 별도로 정리되어 있지 않아 재현성이 약합니다.
+- 모델 성능 비교가 README에 정량적으로 정리되어 있지 않습니다.
+- 실제 서비스형 추천 API나 배포 구조까지 포함하지는 않습니다.
 
-| 파라미터 | 기본값 | 실험 값 예시 | 효과 |
-|----------|--------|--------------|------|
-| Epochs | 5 | 10 / 15 | 과적합에 유의하며 AUC 개선 |
-| Learning Rate | 1e-3 | 5e-4, 3e-4 | 수렴 안정성 확보 |
-| Dropout | 0.4 | 0.3 / 0.5 | regularization |
-| Embedding Dim | 16 | 32 | 표현력 ↑, 학습 시간 ↑ |
-| DNN Units | (128,64) | (256,128,64) | 비선형 복잡도 증가 |
+## Next Steps
 
-실험 로그 및 결과는 WandB / TensorBoard 등을 사용해 추적할 수 있으며, 기본 스크립트에서는 Validation AUC를 표준 출력으로 제공합니다.
-
----
-
-## 7. 기여 & 라이선스
-
-*본 레포지토리는 교육 목적으로 제작되었습니다. 자유롭게 fork 하여 개선 PR을 보내 주세요.*
-
-MIT License 
+- `requirements.txt` 또는 `environment.yml` 추가
+- train/eval 결과를 표로 정리
+- NDCG, Hit Rate, AUC 등 metric을 일관되게 기록
+- notebook 내용을 script 중심 구조로 정리
+- 작은 샘플 데이터로 smoke test 가능하게 만들기
